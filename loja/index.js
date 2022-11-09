@@ -47,8 +47,15 @@ app.get('/produtos', (req, res) => {
 
 app.get('/produtos/:id', (req, res) => {
     let id = req.params.id;
-    let prod = produtos.filter(p => p.id == id)[0];
+    let prod = produtos.filter(p => p.id == id);
     res.json(prod);    
+});
+
+app.get('/produtos/:id/preco', (req, res) => {
+  let id = req.params.id;
+  let prod = produtos.filter(p => p.id == id);
+  let preco = prod.map(element => element.preco)
+  res.json(preco);    
 });
 
 app.post("/produtos", (req, res) => {
