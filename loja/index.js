@@ -65,21 +65,43 @@ app.post('/produtos', (req, res) => {
   let prod = req.body;
 
   if (prod != null && Object.keys(prod).length > 0) {
-    let existe = produtos.find(p => p.id == prod.id);
+    const insert = `INSERT INTO produto (id, nome, descrição, preço, desconto, quantidade, imagem) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?)`
+
+    connection.query(insert, [prod.id, prod.nome, prod.descricao, prod.preco, prod.desconto, prod.quantidade, prod.imagem], (err, resp, campos) => {
+        if (!err) {
+          res.json({'status': true, 'res': resp})
+        } else {
+          res.json({'status': false, 'res': err.sqlMessage})
+        }
+      });
+  //   let existe = produtos.find(p => p.id == prod.id);
    
-    if (!existe) {
-        produtos.push(prod);
-        res.json({
-          "adicionado": true,
-          "msg": "Produto adicionado!"});
-    } else {
-        res.json({
-          "adicionado": false,
-          "msg": "Id do produto já cadastrado!"});
-    }
-  } else {
-    res.json({
-      "adicionado": false,  
-      "msg": "Objeto nulo ou vazio!"});
+  //   if (!existe) {
+  //       produtos.push(prod);
+  //       res.json({
+  //         "adicionado": true,
+  //         "msg": "Produto adicionado!"});
+  //   } else {
+  //       res.json({
+  //         "adicionado": false,
+  //         "msg": "Id do produto já cadastrado!"});
+  //   }
+  // } else {
+  //   res.json({
+  //     "adicionado": false,  
+  //     "msg": "Objeto nulo ou vazio!"});
   }
+});
+
+app.delete('/produtos/:id', (req, res) => {
+  let id = req.params.id;
+  const del = 'DELETE from produto WHERE id = ?';
+  connection.query(del, id, (erro, deleted, campos) => {
+    if (!erro){
+      res.json({'status': true, 'obj': deleted})
+    } else {
+      res.json({'status': false, 'obj': erro.sqlMessage})
+    }
+  });
 });
